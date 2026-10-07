@@ -1,0 +1,5 @@
+character/
+settings.json
+__pycache__/
+*.py[cod]
+.venv/
