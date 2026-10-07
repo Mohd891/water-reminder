@@ -91,7 +91,7 @@ class Pet(QWidget):
         self.yes = QPushButton("شربت ماء", self)
         self.yes.setGeometry(28, 338, 145, 38)
         self.yes.clicked.connect(self.drink)
-        self.later = QPushButton("لا توكل بعدين", self)
+        self.later = QPushButton("ذكرني بعد 10 دقايق", self)
         self.later.setGeometry(190, 338, 182, 38)
         self.later.clicked.connect(self.snooze)
         for button in (self.yes, self.later):
@@ -161,7 +161,7 @@ class Pet(QWidget):
         self.later.hide()
         self.bubble.setText("أنا أوريك جاي لك الحين!!")
         self.bubble.show()
-        self.next_due = time.monotonic() + 1 * 60
+        self.next_due = time.monotonic() + 10 * 60
         self.phase = "snooze_message"
         self.progress = 0
 
