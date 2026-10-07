@@ -6,7 +6,7 @@ import time
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QColor, QIcon, QPainter, QPixmap
+from PySide6.QtGui import QColor, QIcon, QPainter, QPixmap, QTransform
 from PySide6.QtWidgets import (
     QApplication, QInputDialog, QLabel, QMenu, QPushButton, QSystemTrayIcon, QWidget,
 )
@@ -85,6 +85,11 @@ class Pet(QWidget):
         self.character.setGeometry(95, 61, 210, 264)
         self.character.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.frames = self.load_frames()
+        self.reverse_frames = [
+            frame.transformed(QTransform().scale(-1, 1),
+                              Qt.TransformationMode.SmoothTransformation)
+            for frame in self.frames
+        ]
         self.idle_frame = self.read_frame(BASE / "character" / "avatar.png")
         self.character.setPixmap(self.idle_frame)
 
@@ -128,9 +133,20 @@ class Pet(QWidget):
 
     def load_frames(self):
         paths = sorted((BASE / "character").glob("walk_*.png"))
-        if not paths:
-            paths = [BASE / "character" / "avatar.png"]
-        return [self.read_frame(path) for path in paths]
+        if paths:
+            return [self.read_frame(path) for path in paths]
+
+        sheet = QPixmap(str(BASE / "assets" / "walk.png"))
+        if not sheet.isNull():
+            frame_width = sheet.width() // 4
+            return [
+                sheet.copy(index * frame_width, 0, frame_width, sheet.height()).scaled(
+                    210, 264, Qt.AspectRatioMode.KeepAspectRatio,
+                    Qt.TransformationMode.SmoothTransformation)
+                for index in range(4)
+            ]
+
+        return [self.read_frame(BASE / "character" / "avatar.png")]
 
     def show_reminder(self):
         if self.active:
@@ -215,7 +231,8 @@ class Pet(QWidget):
                 self.hide()
                 return
         if self.phase in ("enter", "leave"):
-            self.character.setPixmap(self.frames[(self.progress // 7) % len(self.frames)])
+            frames = self.frames if self.phase == "enter" else self.reverse_frames
+            self.character.setPixmap(frames[(self.progress // 3) % len(frames)])
         else:
             self.character.setPixmap(self.idle_frame)
 
