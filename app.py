@@ -773,6 +773,11 @@ class Pet(QWidget):
         if paths:
             return [self.read_frame(path) for path in paths]
 
+        avatar = BASE / "character" / "avatar.png"
+        default_cat = BASE / "assets" / "cat.png"
+        if default_cat.exists() and avatar.read_bytes() != default_cat.read_bytes():
+            return [self.read_frame(avatar)]
+
         sheet = QPixmap(str(BASE / "assets" / "walk.png"))
         if sheet.isNull():
             sheet.loadFromData(base64.b64decode(WALK_SPRITE_B64))
