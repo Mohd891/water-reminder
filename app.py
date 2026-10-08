@@ -819,7 +819,7 @@ class Pet(QWidget):
     def snooze(self):
         self.yes.hide()
         self.later.hide()
-        self.bubble.setText("أنا أوريك جاي لك الحين!!")
+        self.bubble.setText("حسنا ساتيك بعد 10 دقائق")
         self.bubble.show()
         self.next_due = time.monotonic() + 10 * 60
         self.phase = "snooze_message"
@@ -858,7 +858,7 @@ class Pet(QWidget):
             self.move(min(self.target_x, self.x() + WALK_STEP), self.target_y)
             if self.x() >= self.target_x:
                 self.phase = "ask"
-                self.bubble.setText(f"{self.settings['name']} شربت ماء ولا لا؟؟")
+                self.bubble.setText("هل شربت الماء؟")
                 self.bubble.show()
                 self.yes.show()
                 self.later.show()
